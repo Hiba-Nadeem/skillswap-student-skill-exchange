@@ -8,6 +8,7 @@ const connectDB = require("./config/db");
 const seedSkills = require("./utils/seedSkills");
 
 const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
 const skillRoutes = require("./routes/skillRoutes");
 
 const app = express();
@@ -23,6 +24,7 @@ app.get("/api/health", (req, res) => {
 
 // API routes
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/skills", skillRoutes);
 
 // 404 for unknown API routes
