@@ -4,6 +4,37 @@ const Skill = require("../models/Skill");
 
 const SKILL_FIELDS = "name category";
 
+// GET /api/users?skill=<skillId>&q=<text>
+// Search students by a skill they can teach and/or by name/university text.
+const searchUsers = async (req, res) => {
+  try {
+    const { skill, q } = req.query;
+    const filter = { _id: { $ne: req.user._id } }; // never include yourself
+
+    if (skill) {
+      if (!mongoose.isValidObjectId(skill)) {
+        return res.status(400).json({ message: "Invalid skill id" });
+      }
+      filter.skillsToTeach = skill;
+    }
+
+    if (q && q.trim()) {
+      // Escape regex special characters so user input is treated as plain text
+      const safe = q.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const regex = new RegExp(safe, "i");
+      filter.$or = [{ name: regex }, { university: regex }, { department: regex }];
+    }
+
+    const users = await User.find(filter)
+      .populate("skillsToTeach skillsToLearn", SKILL_FIELDS)
+      .sort({ createdAt: -1 });
+
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // PUT /api/users/profile
 // Update the logged-in student's profile and skills.
 const updateProfile = async (req, res) => {
@@ -53,4 +84,4 @@ const updateProfile = async (req, res) => {
   }
 };
 
-module.exports = { updateProfile };
+module.exports = { searchUsers, updateProfile };

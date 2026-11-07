@@ -3,8 +3,10 @@ import { Link, NavLink } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import Avatar from './Avatar.jsx'
 
-// More links are added as new pages are built
-const APP_LINKS = []
+const APP_LINKS = [
+  { to: '/explore', label: 'Explore' },
+  { to: '/matches', label: 'Matches' },
+]
 
 function Navbar() {
   const { user, logout } = useAuth()

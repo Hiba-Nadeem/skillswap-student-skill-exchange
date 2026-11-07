@@ -6,6 +6,8 @@ import Landing from './pages/Landing.jsx'
 import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import Profile from './pages/Profile.jsx'
+import Explore from './pages/Explore.jsx'
+import Matches from './pages/Matches.jsx'
 import NotFound from './pages/NotFound.jsx'
 
 function App() {
@@ -28,6 +30,8 @@ function App() {
             {/* Temporary: the real dashboard page is added in a later chunk */}
             <Route path="/dashboard" element={<Navigate to="/profile" replace />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/explore" element={<Explore />} />
+            <Route path="/matches" element={<Matches />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />
