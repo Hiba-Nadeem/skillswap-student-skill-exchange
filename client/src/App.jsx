@@ -10,6 +10,7 @@ import Explore from './pages/Explore.jsx'
 import StudentProfile from './pages/StudentProfile.jsx'
 import Matches from './pages/Matches.jsx'
 import Requests from './pages/Requests.jsx'
+import Messages from './pages/Messages.jsx'
 import NotFound from './pages/NotFound.jsx'
 
 function App() {
@@ -36,6 +37,8 @@ function App() {
             <Route path="/students/:id" element={<StudentProfile />} />
             <Route path="/matches" element={<Matches />} />
             <Route path="/requests" element={<Requests />} />
+            <Route path="/messages" element={<Messages />} />
+            <Route path="/messages/:userId" element={<Messages />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />

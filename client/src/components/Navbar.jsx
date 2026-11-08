@@ -7,6 +7,7 @@ const APP_LINKS = [
   { to: '/explore', label: 'Explore' },
   { to: '/matches', label: 'Matches' },
   { to: '/requests', label: 'Requests' },
+  { to: '/messages', label: 'Messages' },
 ]
 
 function Navbar() {
