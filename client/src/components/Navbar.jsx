@@ -6,6 +6,7 @@ import Avatar from './Avatar.jsx'
 const APP_LINKS = [
   { to: '/explore', label: 'Explore' },
   { to: '/matches', label: 'Matches' },
+  { to: '/requests', label: 'Requests' },
 ]
 
 function Navbar() {

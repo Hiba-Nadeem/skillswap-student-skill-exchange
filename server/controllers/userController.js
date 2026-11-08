@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const User = require("../models/User");
 const Skill = require("../models/Skill");
+const Review = require("../models/Review");
 
 const SKILL_FIELDS = "name category";
 
@@ -30,6 +31,41 @@ const searchUsers = async (req, res) => {
       .sort({ createdAt: -1 });
 
     res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// GET /api/users/:id
+// Public profile of one student, including rating summary.
+const getUserById = async (req, res) => {
+  try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(400).json({ message: "Invalid user id" });
+    }
+
+    const user = await User.findById(req.params.id).populate(
+      "skillsToTeach skillsToLearn",
+      SKILL_FIELDS
+    );
+    if (!user) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const reviews = await Review.find({ reviewee: user._id })
+      .populate("reviewer", "name university")
+      .sort({ createdAt: -1 });
+
+    const average =
+      reviews.length > 0
+        ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+        : 0;
+
+    res.json({
+      user,
+      reviews,
+      rating: { average: Number(average.toFixed(1)), count: reviews.length },
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -84,4 +120,4 @@ const updateProfile = async (req, res) => {
   }
 };
 
-module.exports = { searchUsers, updateProfile };
+module.exports = { searchUsers, getUserById, updateProfile };
