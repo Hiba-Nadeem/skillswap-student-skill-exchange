@@ -13,6 +13,7 @@ const skillRoutes = require("./routes/skillRoutes");
 const matchRoutes = require("./routes/matchRoutes");
 const requestRoutes = require("./routes/requestRoutes");
 const messageRoutes = require("./routes/messageRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use("/api/skills", skillRoutes);
 app.use("/api/matches", matchRoutes);
 app.use("/api/requests", requestRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 // 404 for unknown API routes
 app.use((req, res) => {

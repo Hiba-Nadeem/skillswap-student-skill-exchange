@@ -4,10 +4,12 @@ import { useAuth } from '../context/AuthContext.jsx'
 import Avatar from './Avatar.jsx'
 
 const APP_LINKS = [
+  { to: '/dashboard', label: 'Dashboard' },
   { to: '/explore', label: 'Explore' },
   { to: '/matches', label: 'Matches' },
   { to: '/requests', label: 'Requests' },
   { to: '/messages', label: 'Messages' },
+  { to: '/reviews', label: 'Reviews' },
 ]
 
 function Navbar() {

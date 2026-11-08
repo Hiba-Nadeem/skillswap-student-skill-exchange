@@ -4,6 +4,7 @@ import api, { getErrorMessage } from '../api/axios.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import Avatar from '../components/Avatar.jsx'
 import StatusBadge from '../components/StatusBadge.jsx'
+import ReviewForm from '../components/ReviewForm.jsx'
 import Loader from '../components/Loader.jsx'
 import EmptyState from '../components/EmptyState.jsx'
 import { formatDate } from '../utils/format.js'
@@ -15,6 +16,7 @@ function Requests() {
   const [data, setData] = useState(null) // { sent, received }
   const [tab, setTab] = useState('received')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [reviewingId, setReviewingId] = useState(null) // request currently being reviewed
   const [busyId, setBusyId] = useState(null) // request whose button is loading
   const [error, setError] = useState('')
 
@@ -136,15 +138,44 @@ function Requests() {
                     <span className="muted small">Waiting for {other.name.split(' ')[0]} to respond</span>
                   )}
                   {r.status === 'accepted' && (
-                    <button className="btn btn-primary btn-sm" disabled={busy} onClick={() => updateStatus(r._id, 'completed')}>
-                      Mark session completed
-                    </button>
+                    <>
+                      <Link to={`/messages/${other._id}`} className="btn btn-outline btn-sm">
+                        Message
+                      </Link>
+                      <button className="btn btn-primary btn-sm" disabled={busy} onClick={() => updateStatus(r._id, 'completed')}>
+                        Mark session completed
+                      </button>
+                    </>
                   )}
                   {r.status === 'completed' && (
-                    <span className="muted small">✓ Session completed</span>
+                    <>
+                      <Link to={`/messages/${other._id}`} className="btn btn-outline btn-sm">
+                        Message
+                      </Link>
+                      {r.reviewedByMe ? (
+                        <span className="muted small">✓ You reviewed this session</span>
+                      ) : (
+                        reviewingId !== r._id && (
+                          <button className="btn btn-primary btn-sm" onClick={() => setReviewingId(r._id)}>
+                            Leave a review
+                          </button>
+                        )
+                      )}
+                    </>
                   )}
                 </div>
 
+                {reviewingId === r._id && (
+                  <ReviewForm
+                    requestId={r._id}
+                    revieweeName={other.name}
+                    onCancel={() => setReviewingId(null)}
+                    onDone={() => {
+                      setReviewingId(null)
+                      load()
+                    }}
+                  />
+                )}
               </article>
             )
           })}

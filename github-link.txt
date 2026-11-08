@@ -1,0 +1,9 @@
+Project: SkillSwap - Student Skill Exchange Platform
+Section: BSDS-7A
+
+GitHub Repository:
+https://github.com/Hiba-Nadeem/skillswap-student-skill-exchange
+
+Group Members:
+1. Hiba Nadeem (23L-2585)
+2. Maryam Tariq (23L-2578)
