@@ -59,8 +59,15 @@ skillswap-student-skill-exchange/
 ## How to run
 
 ### Requirements
-- Node.js 18 or newer
+- Node.js 22.12 or newer
 - MongoDB, either installed locally (MongoDB Community Server) or a free MongoDB Atlas cluster
+
+If MongoDB is not installed, this project includes a development-only runner. After
+installing the server dependencies, run `npm run dev:db` in a separate terminal.
+It starts a real MongoDB process on `127.0.0.1:27017` and keeps data in
+`server/.local-data/` (excluded from Git). The first run downloads MongoDB and needs
+internet access. Keep that terminal open while using the app. Skip this command
+when using an existing MongoDB installation or Atlas.
 
 ### 1. Backend
 
@@ -103,6 +110,12 @@ npm run dev
 ```
 
 Open http://localhost:5173
+
+### Integration tests
+
+From `server/`, run `npm test`. The suite starts its own isolated MongoDB database
+and API on a free port, tests a complete student exchange and authorization rules,
+then shuts them down. It does not use your `.env` or change your development data.
 
 ## API endpoints
 

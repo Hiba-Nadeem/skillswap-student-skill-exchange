@@ -18,19 +18,26 @@ function Messages() {
   const [text, setText] = useState('')
   const [sending, setSending] = useState(false)
   const [error, setError] = useState('')
+  const [conversationError, setConversationError] = useState('')
   const bottomRef = useRef(null)
+  const threadVersion = useRef(0)
 
-  const loadConversations = () =>
-    api
+  const loadConversations = () => {
+    setConversationError('')
+    return api
       .get('/messages/conversations')
       .then((res) => setConversations(res.data))
-      .catch((err) => setError(getErrorMessage(err)))
+      .catch((err) => setConversationError(getErrorMessage(err)))
+  }
 
-  const loadThread = (id) =>
-    api
+  const loadThread = (id) => {
+    const version = ++threadVersion.current
+    setError('')
+    return api
       .get(`/messages/${id}`)
-      .then((res) => setThread(res.data))
-      .catch((err) => setError(getErrorMessage(err)))
+      .then((res) => { if (version === threadVersion.current) setThread(res.data) })
+      .catch((err) => { if (version === threadVersion.current) setError(getErrorMessage(err)) })
+  }
 
   useEffect(() => {
     loadConversations()
@@ -40,7 +47,9 @@ function Messages() {
   useEffect(() => {
     setThread(null)
     setError('')
+    setText('')
     if (userId) loadThread(userId)
+    return () => { threadVersion.current += 1 }
   }, [userId])
 
   // Keep the newest message in view
@@ -53,12 +62,17 @@ function Messages() {
     if (!text.trim()) return
     setSending(true)
     setError('')
+    const version = threadVersion.current
+    const recipient = userId
     try {
-      await api.post(`/messages/${userId}`, { text })
-      setText('')
-      await Promise.all([loadThread(userId), loadConversations()])
+      await api.post(`/messages/${recipient}`, { text })
+      if (version === threadVersion.current) {
+        setText('')
+        await loadThread(recipient)
+      }
+      await loadConversations()
     } catch (err) {
-      setError(getErrorMessage(err))
+      if (version === threadVersion.current) setError(getErrorMessage(err))
     } finally {
       setSending(false)
     }
@@ -69,7 +83,9 @@ function Messages() {
     if (userId) loadThread(userId)
   }
 
-  if (!conversations) return <Loader text="Loading messages..." />
+  if (!conversations) return conversationError ? (
+    <div className="container page"><p className="error" role="alert">{conversationError}</p><button className="btn btn-outline" onClick={loadConversations}>Try again</button></div>
+  ) : <Loader text="Loading messages..." />
 
   return (
     <div className="container page">
@@ -83,7 +99,8 @@ function Messages() {
         </button>
       </div>
 
-      {conversations.length === 0 ? (
+      {conversationError && <p className="error" role="alert">{conversationError}</p>}
+      {conversations.length === 0 && !userId ? (
         <EmptyState
           title="No conversations yet"
           text="When one of your requests is accepted, you can message that student here."
@@ -149,6 +166,7 @@ function Messages() {
                   <form className="composer" onSubmit={handleSend}>
                     <input
                       value={text}
+                      aria-label="Message"
                       onChange={(e) => setText(e.target.value)}
                       placeholder="Write a message..."
                       maxLength={1000}

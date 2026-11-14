@@ -12,14 +12,16 @@ function Dashboard() {
   const { user } = useAuth()
   const [data, setData] = useState(null)
   const [error, setError] = useState('')
+  const [attempt, setAttempt] = useState(0)
 
   // Load everything the dashboard needs in parallel
   useEffect(() => {
+    const controller = new AbortController()
     Promise.all([
-      api.get('/matches'),
-      api.get('/requests'),
-      api.get('/messages/conversations'),
-      api.get('/reviews/me'),
+      api.get('/matches', { signal: controller.signal }),
+      api.get('/requests', { signal: controller.signal }),
+      api.get('/messages/conversations', { signal: controller.signal }),
+      api.get('/reviews/me', { signal: controller.signal }),
     ])
       .then(([matches, requests, conversations, reviews]) =>
         setData({
@@ -29,10 +31,11 @@ function Dashboard() {
           reviews: reviews.data,
         })
       )
-      .catch((err) => setError(getErrorMessage(err)))
-  }, [])
+      .catch((err) => { if (!controller.signal.aborted) setError(getErrorMessage(err)) })
+    return () => controller.abort()
+  }, [attempt])
 
-  if (error) return <div className="container page"><p className="error">{error}</p></div>
+  if (error) return <div className="container page"><p className="error" role="alert">{error}</p><button className="btn btn-outline" onClick={() => { setError(''); setAttempt((value) => value + 1) }}>Try again</button></div>
   if (!data) return <Loader text="Loading your dashboard..." />
 
   const pendingReceived = data.requests.received.filter((r) => r.status === 'pending')

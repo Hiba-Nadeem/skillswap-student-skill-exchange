@@ -20,16 +20,18 @@ function Explore() {
 
   // Re-run the search whenever the filter or submitted text changes
   useEffect(() => {
+    const controller = new AbortController()
     const params = {}
     if (skillId) params.skill = skillId
     if (search) params.q = search
     api
-      .get('/users', { params })
+      .get('/users', { params, signal: controller.signal })
       .then((res) => {
         setStudents(res.data)
         setError('')
       })
-      .catch((err) => setError(getErrorMessage(err)))
+      .catch((err) => { if (!controller.signal.aborted) setError(getErrorMessage(err)) })
+    return () => controller.abort()
   }, [skillId, search])
 
   const handleSubmit = (e) => {
@@ -57,11 +59,12 @@ function Explore() {
       <form className="card filters" onSubmit={handleSubmit}>
         <input
           type="search"
+          aria-label="Search students"
           placeholder="Search by name, university or department"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        <select value={skillId} onChange={(e) => setSkillId(e.target.value)}>
+        <select aria-label="Filter by teaching skill" value={skillId} onChange={(e) => setSkillId(e.target.value)}>
           <option value="">Any skill they teach</option>
           {skills.map((s) => (
             <option key={s._id} value={s._id}>
@@ -79,7 +82,7 @@ function Explore() {
 
       {error && <p className="error">{error}</p>}
 
-      {students === null ? (
+      {students === null && error ? null : students === null ? (
         <Loader text="Finding students..." />
       ) : students.length === 0 ? (
         <EmptyState

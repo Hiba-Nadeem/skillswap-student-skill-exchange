@@ -35,11 +35,12 @@ function Navbar() {
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
           aria-expanded={open}
+          aria-controls="main-navigation"
         >
           {open ? '✕' : '☰'}
         </button>
 
-        <nav className={`nav-links ${open ? 'open' : ''}`}>
+        <nav id="main-navigation" aria-label="Main navigation" className={`nav-links ${open ? 'open' : ''}`}>
           {user ? (
             <>
               {APP_LINKS.map((link) => (

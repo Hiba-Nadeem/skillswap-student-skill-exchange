@@ -4,6 +4,7 @@ import axios from 'axios'
 // "/api" is forwarded to http://localhost:5000 by the Vite proxy (vite.config.js).
 const api = axios.create({
   baseURL: '/api',
+  timeout: 15000,
 })
 
 // Attach the JWT to every request if the user is logged in
