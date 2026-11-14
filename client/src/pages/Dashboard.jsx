@@ -61,8 +61,9 @@ function Dashboard() {
 
   return (
     <div className="container page">
-      <div className="page-head">
+      <div className="page-head dashboard-welcome">
         <div>
+          <p className="eyebrow">Your learning space</p>
           <h1>Hi, {user.name.split(' ')[0]} 👋</h1>
           <p className="muted">Here is what is happening with your skill swaps.</p>
         </div>
@@ -82,8 +83,11 @@ function Dashboard() {
       <div className="grid grid-4 stats">
         {stats.map((s) => (
           <Link key={s.label} to={s.to} className="card stat">
+            <span className="stat-heading">
+              <span className="stat-label">{s.label}</span>
+              <span className="stat-arrow" aria-hidden="true">↗</span>
+            </span>
             <span className="stat-value">{s.value}</span>
-            <span className="stat-label">{s.label}</span>
           </Link>
         ))}
       </div>
