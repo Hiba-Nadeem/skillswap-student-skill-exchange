@@ -2,7 +2,7 @@ Project: SkillSwap - Student Skill Exchange Platform
 Section: BSDS-7A
 
 GitHub Repository:
-https://github.com/Hiba-Nadeem/skillswap-student-skill-exchange
+https://github.com/YOUR-USERNAME/skillswap-student-skill-exchange
 
 Group Members:
 1. Hiba Nadeem (23L-2585)

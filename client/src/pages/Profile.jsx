@@ -20,7 +20,7 @@ const toForm = (user) => ({
 
 function Profile() {
   const { user, setUser } = useAuth()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const isWelcome = searchParams.get('welcome') === '1'
 
   const [skills, setSkills] = useState([])
@@ -54,7 +54,6 @@ function Profile() {
       const res = await api.put('/users/profile', form)
       setUser(res.data) // update the user everywhere in the app
       setEditing(false)
-      if (isWelcome) setSearchParams({}, { replace: true }) // drop ?welcome=1 from the URL
       setSuccess('Profile saved.')
     } catch (err) {
       setError(getErrorMessage(err))
